@@ -20,7 +20,9 @@ jobs:
           git config user.name "LaTeX Compile Bot"
           git config user.email "actions@github.com"
           mkdir -p pdf
-          mv -u example-main/main.pdf example-main.pdf
+          ls
+          ls example-main 
+          mv -u example-main/main.pdf pdf/example-main.pdf
           git add pdf
           if [[ $(git diff HEAD --stat) == '' ]]; then (echo 'Working tree is clean') 
           else (git commit -m "compile example-main pdf"  && git push) fi
