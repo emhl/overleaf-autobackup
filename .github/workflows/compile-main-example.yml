@@ -1,0 +1,27 @@
+name: compile example-main
+on: 
+  workflow_dispatch:
+  push:
+    paths:
+      - 'example-main/**'
+  
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: "example-main/main.tex"
+          work_in_root_file_dir: true
+      - run: |
+          git config user.name "LaTeX Compile Bot"
+          git config user.email "actions@github.com"
+          mkdir -p pdf
+          mv -u example-main/main.pdf example-main.pdf
+          git add pdf
+          if [[ $(git diff HEAD --stat) == '' ]]; then (echo 'Working tree is clean') 
+          else (git commit -m "compile example-main pdf"  && git push) fi
+

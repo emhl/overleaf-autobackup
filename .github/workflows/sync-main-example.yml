@@ -1,0 +1,41 @@
+name: sync example-main
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Fetch the latest version from overleaf server
+      uses: emhl/overleaf_sync_with_git@master
+      with:
+        OVERLEAF_PROJECT_ID: ${{ secrets.EXAMPLE_PROJECT_ID }}
+        OVERLEAF_COOKIE: ${{ secrets.OVERLEAF_COOKIE }}
+
+    - name: Upload to Project Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: example-main
+        path: ./artifacts/
+        retention-days: 1
+
+    - uses: actions/checkout@v2
+      with:
+        path: repo/
+        token: ${{secrets.PAT}}
+    
+    - run: |
+        cd repo/
+        mkdir -p example-main
+        cp -r ../artifacts/* ./example-main
+        git config user.name "Overleaf Sync Bot"
+        git config user.email "actions@github.com"
+        git add .
+        if [[ $(git diff HEAD --stat) == '' ]]; then (echo 'Working tree is clean') 
+        else (git commit -m "Sync example-main with overleaf remote"  && git push) fi
+
+    - uses: geekyeggo/delete-artifact@v1
+      with:
+        name: example-main
