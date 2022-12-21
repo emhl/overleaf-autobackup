@@ -22,7 +22,7 @@ jobs:
           mkdir -p pdf
           ls
           ls example-main 
-          mv -u example-main/main.pdf pdf/example-main.pdf
+          rsync -c example-main/main.pdf pdf/example-main.pdf
           git add pdf
           if [[ $(git diff HEAD --stat) == '' ]]; then (echo 'Working tree is clean') 
           else (git commit -m "compile example-main pdf"  && git push) fi

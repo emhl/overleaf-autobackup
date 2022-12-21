@@ -22,7 +22,7 @@ jobs:
           git config user.email "actions@github.com"
           mkdir -p pdf
           mkdir -p pdf/example-all
-          mv -u example-all/*.pdf pdf/example-all
+          rsync -c example-all/*.pdf pdf/example-all
           git add pdf
           if [[ $(git diff HEAD --stat) == '' ]]; then (echo 'Working tree is clean') 
           else (git commit -m "compile example-all pdf"  && git push) fi
